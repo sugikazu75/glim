@@ -1,6 +1,17 @@
 cmake_minimum_required(VERSION 3.16)
 project(glim VERSION 1.2.0 LANGUAGES CXX)
 
+if(DEFINED ENV{ROS_VERSION})
+  if($ENV{ROS_VERSION} EQUAL 2)
+    # ROS2
+    find_package(ament_cmake REQUIRED)
+  elseif($ENV{ROS_VERSION} EQUAL 1)
+    # ROS1
+    find_package(catkin REQUIRED)
+  endif()
+endif()
+
+
 add_compile_options(-std=c++17)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
@@ -256,7 +267,6 @@ install(FILES
 if(DEFINED ENV{ROS_VERSION})
   if($ENV{ROS_VERSION} EQUAL 2)
     # ROS2
-    find_package(ament_cmake REQUIRED)
     install(DIRECTORY config DESTINATION share/glim)
     ament_export_include_directories(include ${EIGEN3_INCLUDE_DIR} ${OpenCV_INCLUDE_DIRS})
     ament_export_libraries(${glim_LIBRARIES} ${GTSAM_LIBRARIES} fmt spdlog::spdlog)
@@ -264,7 +274,6 @@ if(DEFINED ENV{ROS_VERSION})
     ament_package(CONFIG_EXTRAS "cmake/glim-config.cmake.in")
   elseif($ENV{ROS_VERSION} EQUAL 1)
     # ROS1
-    find_package(catkin REQUIRED)
     catkin_package(
       INCLUDE_DIRS include
       LIBRARIES ${glim_LIBRARIES} ${GTSAM_LIBRARIES} fmt spdlog::spdlog
